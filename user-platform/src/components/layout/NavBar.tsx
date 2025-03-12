@@ -1,6 +1,6 @@
+// src/components/layout/NavBar.tsx
 "use client";
 
-// user-platform/src/components/layout/NavBar.tsx
 import { useState } from 'react';
 import Link from 'next/link';
 import Button from '../ui/Button';
@@ -19,34 +19,34 @@ const NavBar = () => {
           <div className="flex-shrink-0">
             <Link href="/">
               <span className="flex items-center">
-                <span className="text-primary text-2xl font-montserrat font-bold">Boletería</span>
+                <span className="text-primary text-2xl font-display font-bold">Boletería</span>
               </span>
             </Link>
           </div>
           
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex space-x-8">
+          <nav className="hidden md:flex space-x-1">
             {['Conciertos', 'Teatro', 'Deportes', 'Fiestas', 'Transporte'].map((item) => (
               <Link 
                 key={item} 
                 href={`/${item.toLowerCase()}`}
-                className="text-dark hover:text-primary px-3 py-2 text-sm font-medium"
+                className="text-gray-700 hover:text-secondary hover:bg-gray-50 px-3 py-2 rounded-md text-sm font-medium transition-colors"
               >
                 {item}
               </Link>
             ))}
           </nav>
           
-          <div className="hidden md:flex items-center space-x-4">
+          <div className="hidden md:flex items-center space-x-3">
             <Link href="/search">
-              <span className="p-2 text-dark hover:text-primary">
+              <span className="p-2 text-gray-700 hover:text-secondary hover:bg-gray-50 rounded-full transition-colors">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
               </span>
             </Link>
             <Button 
-              variant="outline" 
+              variant="ghost" 
               size="sm"
               onClick={() => router.push('/auth/login')}
             >
@@ -65,11 +65,11 @@ const NavBar = () => {
           <div className="md:hidden">
             <button
               type="button"
-              className="text-dark hover:text-primary"
+              className="text-gray-700 hover:text-gray-900"
               onClick={toggleMenu}
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 6h16M4 12h16M4 18h16" />
               </svg>
             </button>
           </div>
@@ -78,13 +78,13 @@ const NavBar = () => {
       
       {/* Mobile menu */}
       {isMenuOpen && (
-        <div className="md:hidden">
+        <div className="md:hidden border-t border-gray-100">
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
             {['Conciertos', 'Teatro', 'Deportes', 'Fiestas', 'Transporte'].map((item) => (
               <Link 
                 key={item} 
                 href={`/${item.toLowerCase()}`}
-                className="block px-3 py-2 text-base font-medium text-dark hover:text-primary"
+                className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-secondary hover:bg-gray-50"
                 onClick={() => setIsMenuOpen(false)}
               >
                 {item}
@@ -92,9 +92,9 @@ const NavBar = () => {
             ))}
           </div>
           <div className="pt-4 pb-3 border-t border-gray-200">
-            <div className="flex items-center px-5">
+            <div className="flex items-center px-5 space-y-2">
               <Button 
-                variant="outline" 
+                variant="secondary" 
                 size="sm"
                 fullWidth
                 className="mb-2"

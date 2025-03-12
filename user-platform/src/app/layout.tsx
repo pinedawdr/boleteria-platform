@@ -1,16 +1,16 @@
 // src/app/layout.tsx
-import { Montserrat, Open_Sans } from 'next/font/google';
-import './globals.css'; // ¡Esta línea es crucial!
+import { Inter, Plus_Jakarta_Sans } from 'next/font/google';
+import './globals.css'; 
 
-const montserrat = Montserrat({ 
+const inter = Inter({ 
   subsets: ['latin'],
-  variable: '--font-montserrat',
+  variable: '--font-inter',
   display: 'swap',
 });
 
-const openSans = Open_Sans({ 
+const plusJakartaSans = Plus_Jakarta_Sans({ 
   subsets: ['latin'],
-  variable: '--font-opensans',
+  variable: '--font-plus-jakarta',
   display: 'swap',
 });
 
@@ -20,8 +20,8 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="es" className={`${montserrat.variable} ${openSans.variable}`}>
-      <body className={openSans.className}>
+    <html lang="es" className={`${inter.variable} ${plusJakartaSans.variable}`}>
+      <body className={inter.className}>
         {children}
       </body>
     </html>

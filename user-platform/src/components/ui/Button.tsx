@@ -1,11 +1,12 @@
-// user-platform/src/components/ui/Button.tsx
+// src/components/ui/Button.tsx
 import { FC, ButtonHTMLAttributes } from 'react';
 import classNames from 'classnames';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'success';
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'accent';
   size?: 'sm' | 'md' | 'lg';
   fullWidth?: boolean;
+  icon?: React.ReactNode;
 }
 
 const Button: FC<ButtonProps> = ({
@@ -13,23 +14,24 @@ const Button: FC<ButtonProps> = ({
   variant = 'primary',
   size = 'md',
   fullWidth = false,
+  icon,
   className,
   ...props
 }) => {
-  const baseStyles = 'inline-flex items-center justify-center rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2';
+  const baseStyles = 'inline-flex items-center justify-center rounded-md font-medium transition-all focus:outline-none focus:ring-2 focus:ring-offset-1';
   
   const variantStyles = {
-    primary: 'bg-primary text-white hover:bg-primary/90 focus:ring-primary',
-    secondary: 'bg-secondary text-white hover:bg-secondary/90 focus:ring-secondary',
-    outline: 'border border-primary text-primary hover:bg-primary/10 focus:ring-primary',
-    ghost: 'text-primary hover:bg-primary/10 focus:ring-primary',
-    success: 'bg-success text-white hover:bg-success/90 focus:ring-success',
+    primary: 'bg-secondary text-white hover:bg-secondary/90 focus:ring-secondary shadow-sm',
+    secondary: 'bg-white text-gray-800 border border-gray-200 hover:bg-gray-50 focus:ring-gray-500 shadow-sm',
+    outline: 'border border-secondary text-secondary hover:bg-secondary/5 focus:ring-secondary',
+    ghost: 'text-gray-700 hover:bg-gray-100 focus:ring-gray-500',
+    accent: 'bg-accent text-white hover:bg-accent/90 focus:ring-accent shadow-sm',
   };
   
   const sizeStyles = {
-    sm: 'text-sm h-9 px-3',
-    md: 'text-base h-10 px-4',
-    lg: 'text-lg h-12 px-6',
+    sm: 'text-sm h-8 px-3 py-1',
+    md: 'text-sm h-10 px-4 py-2',
+    lg: 'text-base h-12 px-6 py-3',
   };
   
   const widthStyles = fullWidth ? 'w-full' : '';
@@ -45,6 +47,7 @@ const Button: FC<ButtonProps> = ({
       )}
       {...props}
     >
+      {icon && <span className="mr-2">{icon}</span>}
       {children}
     </button>
   );

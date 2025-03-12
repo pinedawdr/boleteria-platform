@@ -1,6 +1,6 @@
+// src/components/sections/FeaturedEventsSection.tsx
 "use client";
 
-// user-platform/src/components/sections/FeaturedEventsSection.tsx
 import Card, { CardImage, CardContent } from '../ui/Card';
 import Button from '../ui/Button';
 import { useRouter } from 'next/navigation';
@@ -67,15 +67,16 @@ const FeaturedEventsSection = () => {
   const router = useRouter();
   
   return (
-    <section className="py-16">
+    <section className="py-20">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center mb-10">
-          <h2 className="text-3xl font-montserrat font-bold">
+        <div className="flex justify-between items-center mb-12">
+          <h2 className="text-3xl font-display font-bold text-gray-900">
             Eventos Destacados
           </h2>
           <Button
-            variant="outline"
+            variant="secondary"
             onClick={() => router.push('/events')}
+            className="font-medium"
           >
             Ver Todos
           </Button>
@@ -93,33 +94,36 @@ const FeaturedEventsSection = () => {
                 <CardImage 
                   src={event.image} 
                   alt={event.title} 
-                  className="h-48"
-                />
-                <span className="absolute top-3 left-3 bg-secondary text-white px-2 py-1 text-xs rounded">
+                  aspectRatio="video"
+                  
+                  />
+                <span className="absolute top-3 left-3 bg-secondary/90 text-white px-2 py-1 text-xs rounded-md backdrop-blur-sm">
                   {event.category}
                 </span>
               </div>
               <CardContent>
-                <h3 className="text-lg font-semibold mb-2 group-hover:text-primary transition-colors">
+                <h3 className="text-lg font-display font-semibold mb-2 group-hover:text-secondary transition-colors">
                   {event.title}
                 </h3>
-                <div className="flex items-center text-sm text-gray-500 mb-1">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
-                  {event.date}
+                <div className="space-y-2 mb-4">
+                  <div className="flex items-center text-sm text-gray-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    {event.date}
+                  </div>
+                  <div className="flex items-center text-sm text-gray-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    {event.location}
+                  </div>
                 </div>
-                <div className="flex items-center text-sm text-gray-500 mb-2">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
-                  {event.location}
-                </div>
-                <div className="flex justify-between items-center mt-4">
-                  <span className="text-primary font-semibold">{event.price}</span>
+                <div className="flex justify-between items-center pt-3 border-t border-gray-100">
+                  <div className="text-secondary font-semibold">{event.price}</div>
                   <Button variant="primary" size="sm">
-                    Comprar
+                    Ver detalles
                   </Button>
                 </div>
               </CardContent>
