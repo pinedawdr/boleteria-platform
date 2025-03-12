@@ -1,28 +1,28 @@
 // src/components/sections/TestimonialsSection.tsx
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const testimonials = [
   {
     id: 1,
     name: 'Carlos Ramírez',
     role: 'Asistente frecuente a conciertos',
-    content: 'Boletería ha transformado la forma en que compro entradas para conciertos. La plataforma es súper intuitiva y me permite elegir exactamente el asiento que quiero. ¡Ya no más sorpresas al llegar al evento!',
+    content: 'Boletería ha transformado la forma en que compro entradas para conciertos. La plataforma es súper intuitiva y me permite elegir exactamente el asiento que quiero.',
     avatar: '/images/testimonial-1.jpg',
   },
   {
     id: 2,
     name: 'María Sánchez',
     role: 'Viajera frecuente',
-    content: 'Me encanta poder comprar todos mis boletos de transporte en un solo lugar. La visualización de asientos en los buses es genial, y los precios son muy competitivos. ¡Ya no uso otra plataforma!',
+    content: 'Me encanta poder comprar todos mis boletos de transporte en un solo lugar. La visualización de asientos en los buses es genial, y los precios son muy competitivos.',
     avatar: '/images/testimonial-2.jpg',
   },
   {
     id: 3,
     name: 'José Gutiérrez',
     role: 'Fanático del teatro',
-    content: 'Como amante del teatro, aprecio el detalle con el que puedo ver la distribución de asientos. La experiencia de compra es rápida y segura. Definitivamente recomendaría Boletería a todos mis amigos.',
+    content: 'Como amante del teatro, aprecio el detalle con el que puedo ver la distribución de asientos. La experiencia de compra es rápida y segura.',
     avatar: '/images/testimonial-3.jpg',
   },
 ];
@@ -30,47 +30,66 @@ const testimonials = [
 const TestimonialsSection = () => {
   const [activeIndex, setActiveIndex] = useState(0);
   
+  // Auto-rotate testimonials
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveIndex((current) => (current + 1) % testimonials.length);
+    }, 5000);
+    
+    return () => clearInterval(interval);
+  }, []);
+  
   return (
-    <section className="py-20 bg-gray-50">
+    <section className="py-16 bg-white">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl font-display font-bold text-gray-900 mb-4">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl font-display font-bold text-gray-900 mb-3">
             Lo que dicen nuestros usuarios
           </h2>
+          <div className="w-24 h-1 bg-secondary mx-auto mb-4 rounded-full"></div>
           <p className="text-gray-600 max-w-2xl mx-auto">
-            Nos esforzamos por brindar la mejor experiencia a nuestros usuarios. Esto es lo que opinan de nosotros.
+            Experiencias reales de nuestra comunidad
           </p>
         </div>
         
-        <div className="max-w-4xl mx-auto">
-          <div className="relative">
+        <div className="max-w-5xl mx-auto">
+          <div className="relative overflow-hidden h-64">
             {testimonials.map((testimonial, index) => (
               <div
                 key={testimonial.id}
-                className={`transition-opacity duration-500 ${
-                  index === activeIndex ? 'opacity-100' : 'opacity-0 absolute inset-0'
+                className={`absolute inset-0 transition-all duration-700 ease-in-out transform ${
+                  index === activeIndex 
+                    ? 'translate-x-0 opacity-100' 
+                    : index < activeIndex 
+                      ? '-translate-x-full opacity-0' 
+                      : 'translate-x-full opacity-0'
                 }`}
               >
-                <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-8 md:p-10">
-                  <div className="flex flex-col md:flex-row items-center md:items-start">
-                    <div className="flex-shrink-0 mb-6 md:mb-0 md:mr-6">
-                      <div className="w-20 h-20 rounded-full overflow-hidden border-4 border-gray-100 shadow-sm">
-                        <img
-                          src={testimonial.avatar}
-                          alt={testimonial.name}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
+                <div className="bg-gray-50 rounded-lg p-8 shadow-sm border border-gray-100 flex flex-col md:flex-row items-center">
+                  <div className="md:w-1/4 flex flex-col items-center text-center mb-6 md:mb-0">
+                    <div className="w-16 h-16 rounded-full overflow-hidden mb-3 ring-2 ring-offset-2 ring-secondary">
+                      <img
+                        src={testimonial.avatar}
+                        alt={testimonial.name}
+                        className="w-full h-full object-cover"
+                      />
                     </div>
-                    <div>
-                      <svg className="h-8 w-8 text-gray-200 mb-4" fill="currentColor" viewBox="0 0 32 32">
-                        <path d="M9.352 4C4.456 7.456 1 13.12 1 19.36c0 5.088 3.072 8.064 6.624 8.064 3.36 0 5.856-2.688 5.856-5.856 0-3.168-2.208-5.472-5.088-5.472-.576 0-1.344.096-1.536.192.48-3.264 3.552-7.104 6.624-9.024L9.352 4zm16.512 0c-4.896 3.456-8.352 9.12-8.352 15.36 0 5.088 3.072 8.064 6.624 8.064 3.264 0 5.856-2.688 5.856-5.856 0-3.168-2.304-5.472-5.184-5.472-.576 0-1.248.096-1.44.192.48-3.264 3.456-7.104 6.528-9.024L25.864 4z" />
+                    <div className="font-medium text-gray-900">{testimonial.name}</div>
+                    <div className="text-sm text-gray-500">{testimonial.role}</div>
+                  </div>
+                  
+                  <div className="md:w-3/4 md:pl-8 md:border-l md:border-gray-200">
+                    <div className="relative">
+                      <svg 
+                        className="absolute -top-3 -left-3 h-8 w-8 text-secondary opacity-20" 
+                        fill="currentColor" 
+                        viewBox="0 0 24 24"
+                      >
+                        <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
                       </svg>
-                      <blockquote className="text-lg italic mb-4 text-gray-700">
-                        "{testimonial.content}"
-                      </blockquote>
-                      <div className="font-display font-semibold text-gray-900">{testimonial.name}</div>
-                      <div className="text-sm text-gray-500">{testimonial.role}</div>
+                      <p className="text-gray-700 text-lg leading-relaxed">
+                        {testimonial.content}
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -78,17 +97,19 @@ const TestimonialsSection = () => {
             ))}
           </div>
           
-          <div className="flex justify-center mt-8 space-x-3">
-            {testimonials.map((_, index) => (
-              <button
-                key={index}
-                className={`w-2.5 h-2.5 rounded-full transition-all ${
-                  index === activeIndex ? 'bg-secondary w-8' : 'bg-gray-300'
-                }`}
-                onClick={() => setActiveIndex(index)}
-                aria-label={`Ver testimonio ${index + 1}`}
-              />
-            ))}
+          <div className="flex justify-center mt-8">
+            <div className="flex space-x-3">
+              {testimonials.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setActiveIndex(index)}
+                  className={`h-2 rounded-full transition-all duration-300 ${
+                    index === activeIndex ? 'w-8 bg-secondary' : 'w-2 bg-gray-300 hover:bg-gray-400'
+                  }`}
+                  aria-label={`Ver testimonio ${index + 1}`}
+                />
+              ))}
+            </div>
           </div>
         </div>
       </div>
