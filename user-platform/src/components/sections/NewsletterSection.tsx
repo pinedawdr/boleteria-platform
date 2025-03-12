@@ -2,7 +2,6 @@
 "use client";
 
 import { useState } from 'react';
-import Button from '../ui/Button';
 
 const NewsletterSection = () => {
   const [email, setEmail] = useState('');
@@ -30,26 +29,25 @@ const NewsletterSection = () => {
               </p>
               
               {isSubmitted ? (
-                <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 max-w-md mx-auto">
+                <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 max-w-sm mx-auto">
                   <p className="font-medium text-white">¡Gracias por suscribirte! Pronto recibirás nuestras novedades.</p>
                 </div>
               ) : (
-                <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row max-w-md mx-auto">
+                <form onSubmit={handleSubmit} className="flex flex-col max-w-sm mx-auto">
                   <input
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="Tu correo electrónico"
                     required
-                    className="flex-grow px-4 py-3 rounded-l-md sm:rounded-r-none focus:outline-none text-gray-900 border-0"
+                    className="w-full px-4 py-2 h-10 text-sm rounded-md focus:outline-none text-gray-900 mb-3"
                   />
-                  <Button 
-                    variant="accent" 
-                    className="mt-2 sm:mt-0 rounded-r-md sm:rounded-l-none"
+                  <button 
                     type="submit"
+                    className="w-full h-10 px-4 py-0 rounded-md bg-white text-secondary text-sm font-medium hover:bg-gray-50 transition-colors"
                   >
                     Suscribirse
-                  </Button>
+                  </button>
                 </form>
               )}
               

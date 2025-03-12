@@ -3,7 +3,7 @@ import { FC, ButtonHTMLAttributes } from 'react';
 import classNames from 'classnames';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'accent';
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'accent' | 'white';
   size?: 'sm' | 'md' | 'lg';
   fullWidth?: boolean;
   icon?: React.ReactNode;
@@ -26,6 +26,7 @@ const Button: FC<ButtonProps> = ({
     outline: 'border border-secondary text-secondary hover:bg-secondary/5 focus:ring-secondary',
     ghost: 'text-gray-700 hover:bg-gray-100 focus:ring-gray-500',
     accent: 'bg-accent text-white hover:bg-accent/90 focus:ring-accent shadow-sm',
+    white: 'bg-white text-gray-800 hover:bg-white/90 focus:ring-white shadow-sm',
   };
   
   const sizeStyles = {
