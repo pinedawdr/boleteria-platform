@@ -106,10 +106,10 @@ const Footer = () => {
             <div className="flex items-center">
               <span className="text-xs text-gray-500 mr-4">Métodos de pago aceptados:</span>
               <div className="flex space-x-3">
-                <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/visa/visa-original.svg" alt="Visa" className="h-6" />
-                <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mastercard/mastercard-original.svg" alt="Mastercard" className="h-6" />
-                <img src="https://cdn.jsdelivr.net/gh/payment-icons/payment-icons/min/single/amex.svg" alt="American Express" className="h-6" />
-                <img src="https://cdn.jsdelivr.net/gh/payment-icons/payment-icons/min/single/paypal.svg" alt="PayPal" className="h-6" />
+                <img src="https://www.svgrepo.com/show/328071/visa.svg" alt="Visa" className="h-6" />
+                <img src="https://www.svgrepo.com/show/362012/mastercard-2.svg" alt="Mastercard" className="h-6" />
+                <img src="https://www.svgrepo.com/show/361976/amex-2.svg" alt="American Express" className="h-6" />
+                <img src="https://www.svgrepo.com/show/362020/paypal-2.svg" alt="PayPal" className="h-6" />
               </div>
             </div>
           </div>

@@ -3,6 +3,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import Button from '../ui/Button';
 import { useRouter } from 'next/navigation';
 
@@ -19,7 +20,7 @@ const NavBar = () => {
           <div className="flex-shrink-0">
             <Link href="/">
               <span className="flex items-center">
-                <span className="text-primary text-2xl font-display font-bold">Boletería</span>
+                <Image src="/images/logo.svg" alt="Boletería" width={150} height={36} className="h-9 w-auto" />
               </span>
             </Link>
           </div>
