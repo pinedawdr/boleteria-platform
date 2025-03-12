@@ -1,5 +1,3 @@
-"use client";
-
 // user-platform/src/components/sections/HeroSection.tsx
 'use client';
 

@@ -1,5 +1,3 @@
-"use client";
-
 // user-platform/src/components/ui/Card.tsx
 import { FC, ReactNode } from 'react';
 import classNames from 'classnames';
@@ -9,19 +7,22 @@ interface CardProps {
   className?: string;
   onClick?: () => void;
   hoverable?: boolean;
+  bordered?: boolean;
 }
 
 const Card: FC<CardProps> = ({ 
   children, 
   className, 
   onClick,
-  hoverable = false
+  hoverable = false,
+  bordered = false
 }) => {
   return (
     <div 
       className={classNames(
-        'bg-white rounded-lg shadow-md overflow-hidden',
-        hoverable && 'transition-transform duration-300 hover:-translate-y-1 hover:shadow-lg',
+        'bg-white rounded-xl shadow-soft overflow-hidden',
+        hoverable && 'transition-all duration-300 hover:-translate-y-1 hover:shadow-medium',
+        bordered && 'border border-gray-200',
         onClick && 'cursor-pointer',
         className
       )}
@@ -41,7 +42,7 @@ export const CardImage: FC<{ src: string; alt: string; className?: string }> = (
     <img 
       src={src} 
       alt={alt} 
-      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" 
+      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" 
     />
   </div>
 );
@@ -50,7 +51,7 @@ export const CardContent: FC<{ children: ReactNode; className?: string }> = ({
   children, 
   className 
 }) => (
-  <div className={classNames('p-4', className)}>
+  <div className={classNames('p-6', className)}>
     {children}
   </div>
 );

@@ -1,5 +1,6 @@
 // src/app/layout.tsx
 import { Montserrat, Open_Sans } from 'next/font/google';
+import './globals.css'; // ¡Esta línea es crucial!
 
 const montserrat = Montserrat({ 
   subsets: ['latin'],
