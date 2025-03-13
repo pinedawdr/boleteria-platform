@@ -39,7 +39,7 @@ const Footer = () => {
               Enlaces rápidos
             </h3>
             <ul className="space-y-3 text-sm">
-              {['Conciertos', 'Teatro', 'Deportes', 'Fiestas', 'Transporte'].map((link) => (
+              {['Conciertos', 'Teatro', 'Deportes', 'Entretenimiento', 'Otros', 'Transporte'].map((link) => (
                 <li key={link}>
                   <Link href={`/${link.toLowerCase()}`} className="text-gray-500 hover:text-gray-900 transition-colors">
                     {link}
@@ -54,13 +54,26 @@ const Footer = () => {
               Legal
             </h3>
             <ul className="space-y-3 text-sm">
-              {['Términos y Condiciones', 'Política de Privacidad', 'Política de Reembolso', 'Ayuda'].map((link) => (
-                <li key={link}>
-                  <Link href={`/legal/${link.toLowerCase().replace(/ /g, '-')}`} className="text-gray-500 hover:text-gray-900 transition-colors">
-                    {link}
-                  </Link>
-                </li>
-              ))}
+              <li>
+                <Link href="/legal/terminos-y-condiciones" className="text-gray-500 hover:text-gray-900 transition-colors">
+                  Términos y Condiciones
+                </Link>
+              </li>
+              <li>
+                <Link href="/legal/politica-de-privacidad" className="text-gray-500 hover:text-gray-900 transition-colors">
+                  Política de Privacidad
+                </Link>
+              </li>
+              <li>
+                <Link href="/legal/politica-de-reembolso" className="text-gray-500 hover:text-gray-900 transition-colors">
+                  Política de Reembolso
+                </Link>
+              </li>
+              <li>
+                <Link href="/legal/ayuda" className="text-gray-500 hover:text-gray-900 transition-colors">
+                  Ayuda
+                </Link>
+              </li>
             </ul>
           </div>
           
