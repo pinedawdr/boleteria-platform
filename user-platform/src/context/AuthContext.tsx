@@ -3,7 +3,7 @@
 
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { supabase } from '@/lib/utils/supabase';
-import { getCurrentUser } from '@/lib/auth';
+import { getCurrentUser, logout } from '@/lib/auth';
 
 interface AuthContextProps {
   user: any | null;
@@ -73,7 +73,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const signOut = async () => {
     try {
       setLoading(true);
-      await supabase.auth.signOut();
+      const { error: logoutError } = await logout();
+      if (logoutError) throw logoutError;
       setUser(null);
     } catch (err) {
       setError(err as Error);

@@ -1,4 +1,4 @@
-// src/app/user-area/profile/page.tsx
+// src/app/user-area/profile/page.tsx (actualizado con mejoras)
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -7,9 +7,11 @@ import Footer from '@/components/layout/Footer';
 import Button from '@/components/ui/Button';
 import { useAuth } from '@/context/AuthContext';
 import { updateUserProfile } from '@/lib/auth';
+import { useRouter } from 'next/navigation';
 
 export default function UserProfile() {
-  const { user } = useAuth();
+  const { user, loading: authLoading, refreshUser } = useAuth();
+  const router = useRouter();
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
     first_name: '',
@@ -25,6 +27,14 @@ export default function UserProfile() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
+  // Redirigir si no está autenticado
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.push('/auth/login?redirect=profile');
+    }
+  }, [user, authLoading, router]);
+
+  // Cargar datos del perfil cuando el usuario está disponible
   useEffect(() => {
     if (user?.profile) {
       setFormData({
@@ -65,6 +75,10 @@ export default function UserProfile() {
         address: formData.address,
       });
       if (error) throw error;
+      
+      // Actualizar los datos del usuario en el contexto
+      await refreshUser();
+      
       setSuccess('Perfil actualizado correctamente');
       setIsEditing(false);
     } catch (err: any) {
@@ -74,12 +88,52 @@ export default function UserProfile() {
     }
   };
 
+  if (authLoading) {
+    return (
+      <main>
+        <NavBar />
+        <div className="min-h-screen flex justify-center items-center bg-gray-50">
+          <div className="flex flex-col items-center">
+            <svg className="animate-spin h-10 w-10 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <p className="mt-3 text-gray-600">Cargando perfil...</p>
+          </div>
+        </div>
+        <Footer />
+      </main>
+    );
+  }
+
   if (!user) {
     return (
       <main>
         <NavBar />
         <div className="min-h-screen flex justify-center items-center bg-gray-50">
-          <p>Por favor inicia sesión para ver tu perfil</p>
+          <div className="bg-white p-8 rounded-lg shadow-sm border border-gray-100 max-w-md w-full text-center">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-gray-400 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 10-8 0v4h8z" />
+            </svg>
+            <h2 className="text-2xl font-bold mb-2">Acceso restringido</h2>
+            <p className="text-gray-600 mb-6">Para ver tu perfil, necesitas iniciar sesión primero.</p>
+            <div className="flex flex-col space-y-3">
+              <Button 
+                variant="primary" 
+                fullWidth 
+                onClick={() => router.push('/auth/login?redirect=profile')}
+              >
+                Iniciar sesión
+              </Button>
+              <Button 
+                variant="outline" 
+                fullWidth 
+                onClick={() => router.push('/')}
+              >
+                Volver al inicio
+              </Button>
+            </div>
+          </div>
         </div>
         <Footer />
       </main>
@@ -123,13 +177,31 @@ export default function UserProfile() {
               
               {success && (
                 <div className="bg-green-50 border-l-4 border-green-500 p-4 mb-4">
-                  <p className="text-green-700">{success}</p>
+                  <div className="flex">
+                    <div className="flex-shrink-0">
+                      <svg className="h-5 w-5 text-green-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                    <div className="ml-3">
+                      <p className="text-sm text-green-700">{success}</p>
+                    </div>
+                  </div>
                 </div>
               )}
               
               {error && (
                 <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-4">
-                  <p className="text-red-700">{error}</p>
+                  <div className="flex">
+                    <div className="flex-shrink-0">
+                      <svg className="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                    <div className="ml-3">
+                      <p className="text-sm text-red-700">{error}</p>
+                    </div>
+                  </div>
                 </div>
               )}
               
@@ -279,7 +351,15 @@ export default function UserProfile() {
                         type="submit"
                         disabled={loading}
                       >
-                        {loading ? 'Guardando...' : 'Guardar cambios'}
+                        {loading ? (
+                          <span className="flex items-center">
+                            <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            Guardando...
+                          </span>
+                        ) : 'Guardar cambios'}
                       </Button>
                     </div>
                   )}
@@ -288,7 +368,10 @@ export default function UserProfile() {
               
               {!isEditing && (
                 <div className="px-6 py-4 bg-gray-50 border-t">
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-gray-600 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 10-8 0v4h8z" />
+                    </svg>
                     Para cambiar tu contraseña, <a href="/user-area/change-password" className="text-secondary hover:underline">haz clic aquí</a>.
                   </p>
                 </div>

@@ -1,4 +1,4 @@
-// src/components/layout/NavBar.tsx
+// src/components/layout/NavBar.tsx (combinado)
 "use client";
 
 import { useState, useEffect, useRef } from 'react';
@@ -6,14 +6,18 @@ import Link from 'next/link';
 import Image from 'next/image';
 import Button from '../ui/Button';
 import { useRouter, usePathname } from 'next/navigation';
+import { useAuth } from '@/context/AuthContext';
 
 const NavBar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState<string | null>(null);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const profileDropdownRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const pathname = usePathname();
+  const { user, signOut } = useAuth();
   
   const categories = [
     { 
@@ -100,11 +104,19 @@ const NavBar = () => {
     setIsDropdownOpen(isDropdownOpen === category ? null : category);
   };
   
-  // Cerrar dropdown al hacer clic fuera
+  const toggleProfileDropdown = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    setIsProfileOpen(!isProfileOpen);
+  };
+  
+  // Cerrar menús al hacer clic fuera
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsDropdownOpen(null);
+      }
+      if (profileDropdownRef.current && !profileDropdownRef.current.contains(event.target as Node)) {
+        setIsProfileOpen(false);
       }
     };
     
@@ -114,7 +126,7 @@ const NavBar = () => {
     };
   }, []);
   
-  // Detectar el scroll para cambiar el estilo de la barra de navegación
+  // Detectar el scroll para cambiar el estilo
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 10) {
@@ -127,6 +139,23 @@ const NavBar = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Manejar el cierre de sesión
+  const handleSignOut = async () => {
+    await signOut();
+    router.push('/');
+    setIsProfileOpen(false);
+  };
+  
+  // Obtener las iniciales del usuario para el avatar
+  const getUserInitials = () => {
+    if (!user?.profile) return '?';
+    
+    const firstName = user.profile.first_name || '';
+    const lastName = user.profile.last_name || '';
+    
+    return firstName.charAt(0) + (lastName ? lastName.charAt(0) : '');
+  };
   
   return (
     <header className={`sticky top-0 z-50 transition-all duration-300 ${
@@ -134,6 +163,7 @@ const NavBar = () => {
     }`}>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
+          {/* Logo y navegación */}
           <div className="flex items-center space-x-8">
             <div className="flex-shrink-0">
               <Link href="/">
@@ -222,6 +252,7 @@ const NavBar = () => {
             </nav>
           </div>
           
+          {/* Controles de usuario para escritorio */}
           <div className="hidden lg:flex items-center space-x-4">
             <button 
               className="p-2 text-gray-700 hover:text-secondary hover:bg-gray-50 rounded-full transition-colors relative group"
@@ -249,29 +280,90 @@ const NavBar = () => {
             
             <div className="h-6 w-px bg-gray-300 mx-1"></div>
             
-            <Button 
-              variant="ghost" 
-              size="sm"
-              onClick={() => router.push('/auth/login')}
-              className="border-0 hover:bg-gray-50 flex items-center"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-              </svg>
-              Ingresar
-            </Button>
-            
-            <Button 
-              variant="primary" 
-              size="sm"
-              onClick={() => router.push('/auth/register')}
-              className="shadow-sm hover:shadow-md font-medium"
-            >
-              Registrarse
-            </Button>
+            {/* Mostrar botones de inicio de sesión/registro o avatar de usuario según estado de autenticación */}
+            {user ? (
+              <div className="relative" ref={profileDropdownRef}>
+                <button
+                  onClick={toggleProfileDropdown}
+                  className="flex items-center space-x-2 text-gray-700 hover:text-secondary focus:outline-none"
+                >
+                  <div className="h-8 w-8 rounded-full bg-secondary text-white flex items-center justify-center text-sm font-medium">
+                    {getUserInitials()}
+                  </div>
+                </button>
+                
+                {isProfileOpen && (
+                  <div className="absolute right-0 mt-2 w-56 bg-white shadow-xl rounded-md overflow-hidden z-10 border border-gray-100 animate-fadeIn">
+                    <div className="py-2">
+                      <div className="px-4 py-2 border-b border-gray-100">
+                        <p className="text-sm font-semibold text-gray-900">{user.profile?.first_name} {user.profile?.last_name}</p>
+                        <p className="text-xs text-gray-500">{user.email}</p>
+                      </div>
+                      
+                      <Link
+                        href="/user-area/profile"
+                        className="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:text-secondary hover:bg-gray-50"
+                        onClick={() => setIsProfileOpen(false)}
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-3 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                        </svg>
+                        Mi Perfil
+                      </Link>
+                      
+                      <Link
+                        href="/user-area/tickets"
+                        className="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:text-secondary hover:bg-gray-50"
+                        onClick={() => setIsProfileOpen(false)}
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-3 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
+                        </svg>
+                        Mis Boletos
+                      </Link>
+                      
+                      <div className="border-t border-gray-100 my-1"></div>
+                      
+                      <button
+                        onClick={handleSignOut}
+                        className="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:text-red-500 hover:bg-gray-50 w-full text-left"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-3 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                        </svg>
+                        Cerrar Sesión
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <>
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  onClick={() => router.push('/auth/login')}
+                  className="border-0 hover:bg-gray-50 flex items-center"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                  Ingresar
+                </Button>
+                
+                <Button 
+                  variant="primary" 
+                  size="sm"
+                  onClick={() => router.push('/auth/register')}
+                  className="shadow-sm hover:shadow-md font-medium"
+                >
+                  Registrarse
+                </Button>
+              </>
+            )}
           </div>
           
-          {/* Mobile menu button */}
+          {/* Menú móvil - actualizar para mostrar perfil de usuario */}
           <div className="lg:hidden flex items-center space-x-4">
             <button 
               className="p-2 text-gray-700 hover:text-secondary hover:bg-gray-50 rounded-full transition-colors"
@@ -290,6 +382,17 @@ const NavBar = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
               </svg>
             </button>
+            
+            {user && (
+              <button 
+                className="p-2 text-gray-700 hover:text-secondary hover:bg-gray-50 rounded-full transition-colors"
+                onClick={() => router.push('/user-area/profile')}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+              </button>
+            )}
             
             <button
               type="button"
@@ -311,7 +414,7 @@ const NavBar = () => {
         </div>
       </div>
       
-      {/* Mobile menu */}
+      {/* Menú móvil - actualizado para mostrar perfil de usuario */}
       {isMenuOpen && (
         <div className="lg:hidden border-t border-gray-100 bg-white animate-fadeIn">
           <div className="overflow-hidden">
@@ -397,34 +500,73 @@ const NavBar = () => {
             </nav>
             
             <div className="border-t border-gray-200 py-4 px-4 space-y-3">
-              <Button 
-                variant="outline" 
-                size="md"
-                fullWidth
-                onClick={() => {
-                  router.push('/auth/login');
-                  setIsMenuOpen(false);
-                }}
-                className="justify-center"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                </svg>
-                Ingresar
-              </Button>
-              
-              <Button 
-                variant="primary" 
-                size="md"
-                fullWidth
-                onClick={() => {
-                  router.push('/auth/register');
-                  setIsMenuOpen(false);
-                }}
-                className="justify-center"
-              >
-                Registrarse
-              </Button>
+              {user ? (
+                <div>
+                  <div className="flex items-center p-2 mb-3">
+                    <div className="h-10 w-10 rounded-full bg-secondary text-white flex items-center justify-center text-lg font-medium mr-3">
+                      {getUserInitials()}
+                    </div>
+                    <div>
+                    <p className="font-medium">{user.profile?.first_name} {user.profile?.last_name}</p>
+                      <p className="text-sm text-gray-500">{user.email}</p>
+                    </div>
+                  </div>
+                  
+                  <Button 
+                    variant="outline" 
+                    size="md"
+                    fullWidth
+                    onClick={() => {
+                      router.push('/user-area/profile');
+                      setIsMenuOpen(false);
+                    }}
+                    className="justify-center mb-2"
+                  >
+                    Mi Perfil
+                  </Button>
+                  
+                  <Button 
+                    variant="primary" 
+                    size="md"
+                    fullWidth
+                    onClick={handleSignOut}
+                    className="justify-center"
+                  >
+                    Cerrar Sesión
+                  </Button>
+                </div>
+              ) : (
+                <>
+                  <Button 
+                    variant="outline" 
+                    size="md"
+                    fullWidth
+                    onClick={() => {
+                      router.push('/auth/login');
+                      setIsMenuOpen(false);
+                    }}
+                    className="justify-center"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                    Ingresar
+                  </Button>
+                  
+                  <Button 
+                    variant="primary" 
+                    size="md"
+                    fullWidth
+                    onClick={() => {
+                      router.push('/auth/register');
+                      setIsMenuOpen(false);
+                    }}
+                    className="justify-center"
+                  >
+                    Registrarse
+                  </Button>
+                </>
+              )}
             </div>
           </div>
         </div>

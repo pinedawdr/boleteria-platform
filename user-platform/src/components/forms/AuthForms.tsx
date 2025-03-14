@@ -1,10 +1,11 @@
 // src/components/forms/AuthForms.tsx
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Button from '../ui/Button';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { signUp, login } from '@/lib/auth';
+import { useAuth } from '@/context/AuthContext';
 
 interface AuthFormProps {
   type: 'login' | 'register';
@@ -19,6 +20,24 @@ const AuthForm: React.FC<AuthFormProps> = ({ type }) => {
   const [error, setError] = useState('');
   
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectPath = searchParams.get('redirect');
+  const registered = searchParams.get('registered');
+  const { user } = useAuth();
+  
+  // Redirigir si el usuario ya está autenticado
+  useEffect(() => {
+    if (user) {
+      router.push(redirectPath ? `/${redirectPath}` : '/');
+    }
+  }, [user, router, redirectPath]);
+  
+  // Mostrar mensaje si el usuario acaba de registrarse
+  useEffect(() => {
+    if (type === 'login' && registered === 'true') {
+      setError('Registro exitoso. Por favor inicia sesión con tus credenciales.');
+    }
+  }, [type, registered]);
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -56,7 +75,8 @@ const AuthForm: React.FC<AuthFormProps> = ({ type }) => {
         if (loginError) throw loginError;
         
         // Redirigir al usuario después del inicio de sesión exitoso
-        router.push('/');
+        // (Esto podría no ser necesario con el useEffect de arriba, pero es una capa adicional de seguridad)
+        router.push(redirectPath ? `/${redirectPath}` : '/');
       }
     } catch (error: any) {
       setError(error.message || 'Ha ocurrido un error. Inténtalo nuevamente.');
@@ -79,7 +99,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ type }) => {
       </div>
       
       {error && (
-        <div className="mb-6 bg-red-50 border-l-4 border-red-500 p-4 text-red-700 text-sm">
+        <div className={`mb-6 bg-${registered === 'true' ? 'green' : 'red'}-50 border-l-4 border-${registered === 'true' ? 'green' : 'red'}-500 p-4 text-${registered === 'true' ? 'green' : 'red'}-700 text-sm`}>
           {error}
         </div>
       )}
