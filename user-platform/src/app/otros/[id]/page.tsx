@@ -11,7 +11,7 @@ import SeatMap from '@/components/maps/SeatMap';
 const eventData = {
   id: '1',
   title: 'Expo Gastronomía',
-  date: '20-22 de mayo de 2023',
+  date: '20-22 de mayo de 2025',
   time: '10:00 - 20:00',
   location: 'Parque de la Exposición',
   address: 'Paseo Colón s/n, Lima',

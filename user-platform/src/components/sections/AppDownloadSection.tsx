@@ -20,7 +20,7 @@ const AppDownloadSection = () => {
               href="https://apps.apple.com" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="flex items-center justify-center bg-black text-white px-6 py-3 rounded-md hover:bg-gray-800 transition-colors"
+              className="flex items-center justify-center bg-gray-800 text-white px-6 py-3 rounded-md hover:bg-gray-700 transition-colors"
             >
               <img 
                 src="https://www.svgrepo.com/show/452159/app-store.svg" 

@@ -1,6 +1,7 @@
 // src/app/layout.tsx
 import { Inter, Plus_Jakarta_Sans } from 'next/font/google';
-import './globals.css'; 
+import './globals.css';
+import { AuthProvider } from '@/context/AuthContext';
 
 const inter = Inter({ 
   subsets: ['latin'],
@@ -22,7 +23,9 @@ export default function RootLayout({
   return (
     <html lang="es" className={`${inter.variable} ${plusJakartaSans.variable}`}>
       <body className={inter.className}>
-        {children}
+        <AuthProvider>
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );

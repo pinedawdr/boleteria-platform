@@ -1,23 +1,44 @@
 // src/app/user-area/profile/page.tsx
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import NavBar from '@/components/layout/NavBar';
 import Footer from '@/components/layout/Footer';
 import Button from '@/components/ui/Button';
+import { useAuth } from '@/context/AuthContext';
+import { updateUserProfile } from '@/lib/auth';
 
 export default function UserProfile() {
+  const { user } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
-    name: 'Juan Pérez',
-    email: 'juan.perez@example.com',
-    phone: '987654321',
-    documentType: 'dni',
-    documentNumber: '12345678',
-    address: 'Av. Arequipa 123, Lima',
+    first_name: '',
+    last_name: '',
+    phone: '',
+    document_type: 'dni',
+    document_number: '',
+    address: '',
     notificationsEmail: true,
     notificationsSMS: false,
   });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+
+  useEffect(() => {
+    if (user?.profile) {
+      setFormData({
+        first_name: user.profile.first_name || '',
+        last_name: user.profile.last_name || '',
+        phone: user.profile.phone || '',
+        document_type: user.profile.document_type || 'dni',
+        document_number: user.profile.document_number || '',
+        address: user.profile.address || '',
+        notificationsEmail: true,
+        notificationsSMS: false,
+      });
+    }
+  }, [user]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target as HTMLInputElement;
@@ -28,12 +49,42 @@ export default function UserProfile() {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Aquí iría la lógica para actualizar el perfil
-    console.log('Datos actualizados:', formData);
-    setIsEditing(false);
+    setLoading(true);
+    setError('');
+    setSuccess('');
+    try {
+      if (!user) throw new Error('Usuario no autenticado');
+      const { error } = await updateUserProfile(user.id, {
+        first_name: formData.first_name,
+        last_name: formData.last_name,
+        phone: formData.phone,
+        document_type: formData.document_type,
+        document_number: formData.document_number,
+        address: formData.address,
+      });
+      if (error) throw error;
+      setSuccess('Perfil actualizado correctamente');
+      setIsEditing(false);
+    } catch (err: any) {
+      setError(err.message || 'Error al actualizar el perfil');
+    } finally {
+      setLoading(false);
+    }
   };
+
+  if (!user) {
+    return (
+      <main>
+        <NavBar />
+        <div className="min-h-screen flex justify-center items-center bg-gray-50">
+          <p>Por favor inicia sesión para ver tu perfil</p>
+        </div>
+        <Footer />
+      </main>
+    );
+  }
 
   return (
     <main>
@@ -51,11 +102,11 @@ export default function UserProfile() {
                 <div className="flex justify-between items-center">
                   <div className="flex items-center">
                     <div className="h-16 w-16 rounded-full bg-secondary text-white flex items-center justify-center text-2xl font-semibold">
-                      {formData.name.charAt(0)}
+                      {formData.first_name.charAt(0)}
                     </div>
                     <div className="ml-4">
-                      <h2 className="text-xl font-semibold">{formData.name}</h2>
-                      <p className="text-gray-600">{formData.email}</p>
+                      <h2 className="text-xl font-semibold">{`${formData.first_name} ${formData.last_name}`}</h2>
+                      <p className="text-gray-600">{user.email}</p>
                     </div>
                   </div>
                   
@@ -70,18 +121,30 @@ export default function UserProfile() {
                 </div>
               </div>
               
+              {success && (
+                <div className="bg-green-50 border-l-4 border-green-500 p-4 mb-4">
+                  <p className="text-green-700">{success}</p>
+                </div>
+              )}
+              
+              {error && (
+                <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-4">
+                  <p className="text-red-700">{error}</p>
+                </div>
+              )}
+              
               <div className="p-6">
                 <form onSubmit={handleSubmit}>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                      <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-                        Nombre completo
+                      <label htmlFor="first_name" className="block text-sm font-medium text-gray-700 mb-1">
+                        Nombre
                       </label>
                       <input
                         type="text"
-                        id="name"
-                        name="name"
-                        value={formData.name}
+                        id="first_name"
+                        name="first_name"
+                        value={formData.first_name}
                         onChange={handleInputChange}
                         disabled={!isEditing}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent disabled:bg-gray-100 disabled:text-gray-500"
@@ -89,14 +152,14 @@ export default function UserProfile() {
                     </div>
                     
                     <div>
-                      <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                        Correo electrónico
+                      <label htmlFor="last_name" className="block text-sm font-medium text-gray-700 mb-1">
+                        Apellido
                       </label>
                       <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        value={formData.email}
+                        type="text"
+                        id="last_name"
+                        name="last_name"
+                        value={formData.last_name}
                         onChange={handleInputChange}
                         disabled={!isEditing}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent disabled:bg-gray-100 disabled:text-gray-500"
@@ -119,13 +182,13 @@ export default function UserProfile() {
                     </div>
                     
                     <div>
-                      <label htmlFor="documentType" className="block text-sm font-medium text-gray-700 mb-1">
+                      <label htmlFor="document_type" className="block text-sm font-medium text-gray-700 mb-1">
                         Tipo de documento
                       </label>
                       <select
-                        id="documentType"
-                        name="documentType"
-                        value={formData.documentType}
+                        id="document_type"
+                        name="document_type"
+                        value={formData.document_type}
                         onChange={handleInputChange}
                         disabled={!isEditing}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent disabled:bg-gray-100 disabled:text-gray-500"
@@ -137,14 +200,14 @@ export default function UserProfile() {
                     </div>
                     
                     <div>
-                      <label htmlFor="documentNumber" className="block text-sm font-medium text-gray-700 mb-1">
+                      <label htmlFor="document_number" className="block text-sm font-medium text-gray-700 mb-1">
                         Número de documento
                       </label>
                       <input
                         type="text"
-                        id="documentNumber"
-                        name="documentNumber"
-                        value={formData.documentNumber}
+                        id="document_number"
+                        name="document_number"
+                        value={formData.document_number}
                         onChange={handleInputChange}
                         disabled={!isEditing}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent disabled:bg-gray-100 disabled:text-gray-500"
@@ -207,14 +270,16 @@ export default function UserProfile() {
                         variant="outline"
                         type="button"
                         onClick={() => setIsEditing(false)}
+                        disabled={loading}
                       >
                         Cancelar
                       </Button>
                       <Button
                         variant="primary"
                         type="submit"
+                        disabled={loading}
                       >
-                        Guardar cambios
+                        {loading ? 'Guardando...' : 'Guardar cambios'}
                       </Button>
                     </div>
                   )}

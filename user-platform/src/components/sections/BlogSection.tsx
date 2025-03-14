@@ -8,10 +8,10 @@ import { useRouter } from 'next/navigation';
 const blogPosts = [
   {
     id: 1,
-    title: 'Los 5 conciertos más esperados en Perú para este 2023',
+    title: 'Los 5 conciertos más esperados en Perú para este 2025',
     excerpt: 'Una recopilación de los eventos musicales que no te puedes perder este año en el país...',
     image: '/images/blog-1.jpg',
-    date: '15 de enero de 2023',
+    date: '15 de enero de 2025',
     author: 'María Rodríguez',
   },
   {
@@ -19,7 +19,7 @@ const blogPosts = [
     title: 'Guía completa para viajar a Cusco en bus VIP',
     excerpt: 'Descubre cómo hacer más cómodo y placentero tu viaje a la ciudad imperial...',
     image: '/images/blog-2.jpg',
-    date: '28 de enero de 2023',
+    date: '28 de enero de 2025',
     author: 'Carlos Mendoza',
   },
   {
@@ -27,7 +27,7 @@ const blogPosts = [
     title: 'La revitalización del teatro peruano post-pandemia',
     excerpt: 'Analizamos el resurgimiento de las artes escénicas en el país tras los años de restricciones...',
     image: '/images/blog-3.jpg',
-    date: '10 de febrero de 2023',
+    date: '10 de febrero de 2025',
     author: 'Laura Torres',
   },
 ];

@@ -11,7 +11,7 @@ import SeatMap from '@/components/maps/SeatMap';
 const eventData = {
   id: '1',
   title: 'Raíces Andinas Fest',
-  date: '15 de abril de 2023',
+  date: '15 de abril de 2025',
   time: '19:00',
   location: 'Estadio Nacional',
   address: 'Av. José Díaz s/n, Lima',

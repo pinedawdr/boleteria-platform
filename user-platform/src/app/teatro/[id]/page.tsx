@@ -11,7 +11,7 @@ import SeatMap from '@/components/maps/SeatMap';
 const eventData = {
   id: '1',
   title: 'El Fantasma de los Andes',
-  date: '10-30 de marzo de 2023',
+  date: '10-30 de marzo de 2025',
   time: '20:00',
   location: 'Teatro Segura',
   address: 'Jr. Huancavelica 265, Lima',

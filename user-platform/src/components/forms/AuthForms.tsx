@@ -4,6 +4,7 @@
 import { useState } from 'react';
 import Button from '../ui/Button';
 import { useRouter } from 'next/navigation';
+import { signUp, login } from '@/lib/auth';
 
 interface AuthFormProps {
   type: 'login' | 'register';
@@ -25,24 +26,34 @@ const AuthForm: React.FC<AuthFormProps> = ({ type }) => {
     setError('');
     
     try {
-      // En un entorno real, aquí se conectaría con Supabase
-      // Por ahora, simplemente simulamos autenticación
-      
       if (type === 'register') {
         if (password !== confirmPassword) {
           throw new Error('Las contraseñas no coinciden');
         }
         
-        // Simulación de registro
-        console.log('Registro con:', { name, email, password });
-        await new Promise(resolve => setTimeout(resolve, 1000)); // Simular latencia
+        // Dividir el nombre en nombre y apellido
+        const nameParts = name.split(' ');
+        const firstName = nameParts[0];
+        const lastName = nameParts.slice(1).join(' ');
+        
+        const { error: signUpError } = await signUp({
+          email,
+          password,
+          firstName,
+          lastName
+        });
+        
+        if (signUpError) throw signUpError;
         
         // Redirigir al usuario después del registro exitoso
         router.push('/auth/login?registered=true');
       } else {
-        // Simulación de inicio de sesión
-        console.log('Login con:', { email, password });
-        await new Promise(resolve => setTimeout(resolve, 1000)); // Simular latencia
+        const { error: loginError } = await login({
+          email,
+          password
+        });
+        
+        if (loginError) throw loginError;
         
         // Redirigir al usuario después del inicio de sesión exitoso
         router.push('/');

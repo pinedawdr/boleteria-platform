@@ -7,7 +7,7 @@ import Button from '@/components/ui/Button';
 const pressReleases = [
   {
     id: 1,
-    date: '15 de enero de 2023',
+    date: '15 de enero de 2025',
     title: 'Boletería alcanza 1 millón de usuarios activos',
     excerpt: 'La plataforma de venta de boletos para eventos y transporte Boletería ha anunciado que ha superado el millón de usuarios activos mensuales...',
     image: '/images/press-1.jpg',

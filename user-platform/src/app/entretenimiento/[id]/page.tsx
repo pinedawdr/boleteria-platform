@@ -11,7 +11,7 @@ import SeatMap from '@/components/maps/SeatMap';
 const eventData = {
   id: '1',
   title: 'Festival Electrónico Lima',
-  date: '15 de mayo de 2023',
+  date: '15 de mayo de 2025',
   time: '18:00',
   location: 'Playa Agua Dulce',
   address: 'Playa Agua Dulce, Chorrillos, Lima',

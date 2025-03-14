@@ -1,62 +1,76 @@
 // src/app/user-area/tickets/page.tsx
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import NavBar from '@/components/layout/NavBar';
 import Footer from '@/components/layout/Footer';
 import Button from '@/components/ui/Button';
 import Card, { CardContent } from '@/components/ui/Card';
-
-// Datos de ejemplo
-const ticketsData = [
-  {
-    id: '1001',
-    name: 'Raíces Andinas Fest',
-    date: '15 de abril de 2023',
-    time: '19:00',
-    location: 'Estadio Nacional, Lima',
-    type: 'Concierto',
-    seat: 'VIP - Fila C, Asiento 10',
-    price: 350,
-    image: '/images/raices-andinas.jpg',
-    status: 'active',
-    qrCode: '/images/qr-code-example.png'
-  },
-  {
-    id: '1002',
-    name: 'Lima - Cusco VIP',
-    date: '20 de marzo de 2023',
-    time: '22:00',
-    location: 'Terminal Javier Prado',
-    type: 'Transporte',
-    seat: 'Asiento B4',
-    price: 280,
-    image: '/images/lima-cusco.jpg',
-    status: 'active',
-    qrCode: '/images/qr-code-example.png'
-  },
-  {
-    id: '1003',
-    name: 'El Fantasma de los Andes',
-    date: '10 de marzo de 2023',
-    time: '20:00',
-    location: 'Teatro Segura, Lima',
-    type: 'Teatro',
-    seat: 'Platea - Fila D, Asiento 8',
-    price: 120,
-    image: '/images/fantasma-andes.jpg',
-    status: 'used',
-    qrCode: '/images/qr-code-example.png'
-  }
-];
+import { useAuth } from '@/context/AuthContext';
+import { getUserOrders } from '@/lib/orders';
 
 export default function UserTickets() {
+  const { user } = useAuth();
   const [filter, setFilter] = useState<'all' | 'active' | 'used'>('all');
+  const [orders, setOrders] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   
-  const filteredTickets = ticketsData.filter(ticket => {
+  useEffect(() => {
+    const fetchOrders = async () => {
+      if (!user) return;
+      
+      try {
+        setLoading(true);
+        const { data, error } = await getUserOrders(user.id);
+        
+        if (error) throw error;
+        
+        setOrders(data || []);
+      } catch (err: any) {
+        setError(err.message || 'Error al cargar los boletos');
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchOrders();
+  }, [user]);
+  
+  // Convertir las órdenes a tickets para mostrar
+  const tickets = orders.flatMap(order => {
+    return order.order_items.map((item: any) => ({
+      id: item.id,
+      name: item.item_type === 'ticket' ? 'Evento' : 'Transporte', // Idealmente tendrías más información
+      date: new Date(order.created_at).toLocaleDateString('es-ES'),
+      time: new Date(order.created_at).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }),
+      location: 'Ubicación del evento',
+      type: item.item_type === 'ticket' ? 'Evento' : 'Transporte',
+      seat: 'Asiento asignado',
+      price: item.unit_price,
+      image: '/images/raices-andinas.jpg', // Imagen de placeholder
+      status: order.status === 'completed' && new Date(order.created_at) < new Date() ? 'used' : 'active',
+      qrCode: '/images/qr-code-example.png',
+      order_id: order.id
+    }));
+  });
+  
+  const filteredTickets = tickets.filter(ticket => {
     if (filter === 'all') return true;
     return ticket.status === filter;
   });
+  
+  if (!user) {
+    return (
+      <main>
+        <NavBar />
+        <div className="min-h-screen flex justify-center items-center bg-gray-50">
+          <p>Por favor inicia sesión para ver tus boletos</p>
+        </div>
+        <Footer />
+      </main>
+    );
+  }
   
   return (
     <main>
@@ -107,7 +121,21 @@ export default function UserTickets() {
               </div>
             </div>
             
-            {filteredTickets.length === 0 ? (
+            {loading ? (
+              <div className="flex justify-center py-12">
+                <div className="flex flex-col items-center">
+                  <svg className="animate-spin h-10 w-10 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  <p className="mt-3 text-gray-600">Cargando tus boletos...</p>
+                </div>
+              </div>
+            ) : error ? (
+              <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-4">
+                <p className="text-red-700">{error}</p>
+              </div>
+            ) : filteredTickets.length === 0 ? (
               <div className="bg-white rounded-lg shadow border border-gray-100 p-8 text-center">
                 <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">

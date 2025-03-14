@@ -14,7 +14,7 @@ export default function TermsPage() {
               Términos y Condiciones
             </h1>
             <p className="text-gray-500 italic text-center mb-8">
-              Última actualización: 15 de enero de 2023
+              Última actualización: 15 de enero de 2025
             </p>
             
             <div className="bg-white rounded-lg shadow-sm p-8">
